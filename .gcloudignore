@@ -1,0 +1,6 @@
+.gcloudignore
+.git
+.gitignore
+.env
+staging.yaml
+node_modules/
