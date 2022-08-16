@@ -7,6 +7,8 @@ let dotenv = require('dotenv');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+const validate = require('./middlewares/validate');
+
 app.use(async (req, res, next) => {
     await configureDotEnv();
     return next();
@@ -14,6 +16,8 @@ app.use(async (req, res, next) => {
 
 app.use(express.json());
 app.use(morgan('dev'));
+
+app.use(validate.isValidTrelloRequest);
 
 app.listen(PORT, () => {
     console.log(`[start] Listening on port ${PORT}...`);
