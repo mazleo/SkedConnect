@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(async (req, res, next) => {
     await configureDotEnv();
-    next();
+    return next();
 });
 
 app.use(morgan('dev'));
