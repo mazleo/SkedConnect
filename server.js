@@ -12,6 +12,7 @@ app.use(async (req, res, next) => {
     return next();
 });
 
+app.use(express.json());
 app.use(morgan('dev'));
 
 app.listen(PORT, () => {
