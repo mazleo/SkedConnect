@@ -13,25 +13,17 @@ const BOARD_TYPE = 'copyBoard';
 
 router.post('/', async (req, res, next) => {
     let task = null;
-    if (isCardType(req.body)) {
-        task = new Card();
-    }
-    else {
-        task = new Board();
-    }
+    if (isCardType(req.body)) task = new Card();
+    else task = new Board();
 
-    try {
-        await task.populate(req.body.action);
-    }
+    try { await task.populate(req.body.action); }
     catch (error) {
         handleError(error, res);
         return;
     }
 
     const msg = `Task '${task.task}' created.`;
-    const successMsg = {
-        success: msg
-    };
+    const successMsg = {success: msg};
 
     res.status(200);
     await emailTask(task);
@@ -73,9 +65,7 @@ function generateEmail(task) {
 
 function generateTaskAttributeBrackets(character, array) {
     let brackets = '';
-    for (let item of array) {
-        brackets += `[${character}${item}] `;
-    }
+    for (let item of array) brackets += `[${character}${item}] `;
     return brackets;
 }
 
@@ -103,12 +93,8 @@ function handleError(error, res) {
 }
 
 function isCardType(requestBody) {
-    if (requestBody.action.type == CARD_TYPE) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    if (requestBody.action.type == CARD_TYPE) return true;
+    else return false;
 }
 
 module.exports = router;

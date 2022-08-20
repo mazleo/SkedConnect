@@ -18,7 +18,6 @@ class Card extends Task {
         await Card.handleNonSyncRequest(action);
 
         const cardId = action.data.card.id;
-
         const boardName = action.data.board.name;
 
         let card = null;
@@ -27,11 +26,9 @@ class Card extends Task {
             card = await Card.fetchCard(cardId);
             customFields = await Card.fetchCustomFieldItems(cardId);
         }
-        catch (error) {
-            throw new Error(Card.serverError);
-        }
-        let due = card.due !== null ? new Date(card.due) : null;
+        catch (error) { throw new Error(Card.serverError); }
 
+        let due = card.due !== null ? new Date(card.due) : null;
         this.task = card.name;
         this.notes = card.desc;
         this.parentTask = boardName;
@@ -40,12 +37,8 @@ class Card extends Task {
 
         for (let field of customFields) {
             let fieldName = null;
-            try {
-                fieldName = await Card.fetchCustomFieldName(field.idCustomField);
-            }
-            catch (error) {
-                throw new Error(Card.serverError);
-            }
+            try { fieldName = await Card.fetchCustomFieldName(field.idCustomField); }
+            catch (error) { throw new Error(Card.serverError); }
 
             switch (fieldName) {
                 case '⌛ Duration':
@@ -160,25 +153,17 @@ class Card extends Task {
         const actionSyncNewValueId = action.data.customFieldItem.idValue;
 
         let syncField = null;
-        try {
-            syncField = await this.fetchCustomField(actionCustomFieldId);
-        }
-        catch (error) {
-            throw new Error(Card.serverError);
-        }
+        try { syncField = await this.fetchCustomField(actionCustomFieldId); }
+        catch (error) { throw new Error(Card.serverError); }
 
         const syncFieldOldValue = Card.getSyncValueFromId(syncField.options, actionSyncOldValueId);
         const syncFieldNewValue = Card.getSyncValueFromId(syncField.options, actionSyncNewValueId);
 
-        if (syncFieldNewValue === 'False' || (syncFieldOldValue === syncFieldNewValue)) {
-            throw new Error(Card.nonSyncRequestError);
-        }
+        if (syncFieldNewValue === 'False' || (syncFieldOldValue === syncFieldNewValue)) throw new Error(Card.nonSyncRequestError);
     }
 
     static getSyncValueFromId(options, id) {
-        for (let option of options) {
-            if (id == option.id) return option.value.text;
-        }
+        for (let option of options) if (id == option.id) return option.value.text;
     }
 
     static fetchCustomField(id) {
@@ -207,9 +192,7 @@ class Card extends Task {
 
     static handleUnexpectedCustomField(action) {
         const actionCustomFieldName = action.data.customField.name;
-        if (actionCustomFieldName !== Card.expectedSyncFieldName) {
-            throw new Error(Card.unexpectedCustomFieldError);
-        }
+        if (actionCustomFieldName !== Card.expectedSyncFieldName) throw new Error(Card.unexpectedCustomFieldError);
     }
 }
 

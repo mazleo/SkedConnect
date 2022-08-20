@@ -33,22 +33,14 @@ app.listen(PORT, () => {
 
 async function configureDotEnv() {
     const envExists = await isEnvExists();
-    if (envExists) {
-        dotenv.config({path: '.env'});
-    }
-    else {
-        dotenv.config({path: 'app.yaml'})
-    }
+    if (envExists) dotenv.config({path: '.env'});
+    else dotenv.config({path: 'app.yaml'})
 }
 
 async function isEnvExists() {
     let envExists = true;
-    try {
-        await fs.access('.env');
-    }
-    catch(error) {
-        envExists = false;
-    }
+    try { await fs.access('.env'); }
+    catch(error) { envExists = false; }
 
     return envExists;
 }
