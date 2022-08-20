@@ -24,8 +24,16 @@ router.post('/', async (req, res, next) => {
     const msg = `Task '${task.task}' created.`;
     const successMsg = {success: msg};
 
-    await emailTask(task);
-    console.log(`[success] ${msg}`);
+    try {
+        await emailTask(task);
+        console.log(`[success] ${msg}`);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500);
+        res.json({error:{msg:'Server error. Unable to send email.'}});
+        return;
+    }
 
     res.status(200);
     res.json(successMsg);
@@ -91,6 +99,7 @@ function handleError(error, res) {
     }
 
     res.json(errorResponse);
+    return;
 }
 
 function isCardType(requestBody) {

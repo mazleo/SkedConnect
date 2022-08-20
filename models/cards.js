@@ -75,52 +75,47 @@ class Card extends Task {
         }
     }
 
-    static fetchCustomFieldName(id) {
-        return new Promise((resolve, reject) => {
-            const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-            Card.fetch(customFieldApiUrl, resolve, reject);
-        });
+    static async fetchCustomFieldName(id) {
+        const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
+        const field = await Card.fetch(customFieldApiUrl);
+        return field.name;
     }
 
-    static fetchCustomFieldItems(id) {
-        return new Promise((resolve, reject) => {
-            const customFieldsApiUrl = `https://api.trello.com/1/cards/${id}/customFieldItems?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-            Card.fetch(customFieldsApiUrl, resolve, reject);
-        });
+    static async fetchCustomFieldItems(id) {
+        const customFieldsApiUrl = `https://api.trello.com/1/cards/${id}/customFieldItems?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
+        return await Card.fetch(customFieldsApiUrl);
     }
 
-    static fetchCard(cardId) {
-        return new Promise((resolve, reject) => {
-            const cardApiUrl = `https://api.trello.com/1/cards/${cardId}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=all`;
-            Card.fetch(cardApiUrl, resolve, reject);
-        });
+    static async fetchCard(cardId) {
+        const cardApiUrl = `https://api.trello.com/1/cards/${cardId}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=all`;
+        return await Card.fetch(cardApiUrl);
     }
 
-    static fetchCustomField(id) {
-        return new Promise((resolve, reject) => {
-            const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-            Card.fetch(customFieldApiUrl, resolve, reject);
-        });
+    static async fetchCustomField(id) {
+        const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
+        return await Card.fetch(customFieldApiUrl);
     }
 
-    static fetch(url, resolve, reject) {
-        const options = {
-            headers: {
-                'Accept': 'application/json'
-            }
-        };
+    static fetch(url) {
+        return new Promise((resolve, reject) => {
+            const options = {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            };
 
-        const request = https.get(url, options, (response) => {
-            response.on('data', (data) => {
-                resolve(JSON.parse(data.toString()));
+            const request = https.get(url, options, (response) => {
+                response.on('data', (data) => {
+                    resolve(JSON.parse(data.toString()));
+                });
             });
-        });
 
-        request.on('error', (error) => {
-            reject(error);
-        });
+            request.on('error', (error) => {
+                reject(error);
+            });
 
-        request.end();
+            request.end();
+        });
     }
 
     static async handleNonSyncRequest(action) {
@@ -129,7 +124,7 @@ class Card extends Task {
         const actionSyncNewValueId = action.data.customFieldItem.idValue;
 
         let syncField = null;
-        try { syncField = await this.fetchCustomField(actionCustomFieldId); }
+        try { syncField = await Card.fetchCustomField(actionCustomFieldId); }
         catch (error) { throw new Error(Card.serverError); }
 
         const syncFieldOldValue = Card.getSyncValueFromId(syncField.options, actionSyncOldValueId);
