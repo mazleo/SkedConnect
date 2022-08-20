@@ -1,9 +1,5 @@
 
 class Task {
-    static LOW_PRIORITY = 500;
-    static MED_PRIORITY = 501;
-    static HIGH_PRIORITY = 502;
-
     constructor() {
         this.task = null;
         this.notes = null;
@@ -13,7 +9,7 @@ class Task {
         this.dueDate = null;
         this.timeMaps = [];
         this.tags = [];
-        this.priority = Task.MED_PRIORITY;
+        this.priority = null;
         this.zone = null;
         this.url = null;
     }
