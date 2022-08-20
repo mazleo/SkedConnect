@@ -21,6 +21,12 @@ app.use(morgan('dev'));
 app.use(validate.isValidTrelloRequest);
 app.use(auth.verifyFromTrello);
 
+const Board = require('./models/boards');
+const Card = require('./models/cards');
+const ApiRouter = require('./routes/api');
+
+app.use('/api', ApiRouter);
+
 app.listen(PORT, () => {
     console.log(`[start] Listening on port ${PORT}...`);
 });
