@@ -47,7 +47,6 @@ async function isEnvExists() {
         await fs.access('.env');
     }
     catch(error) {
-        console.error(error);
         envExists = false;
     }
 
