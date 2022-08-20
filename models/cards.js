@@ -14,7 +14,7 @@ class Card extends Task {
     }
 
     async populate(action) {
-        await Card.handleUnexpectedCustomField(action);
+        Card.handleUnexpectedCustomField(action);
         await Card.handleNonSyncRequest(action);
 
         const cardId = action.data.card.id;
@@ -22,11 +22,13 @@ class Card extends Task {
         const boardName = action.data.board.name;
 
         let card = null;
+        let customFields = null;
         try {
             card = await Card.fetchCard(cardId);
+            customFields = await Card.fetchCustomFieldItems(cardId);
         }
         catch (error) {
-            throw Card.serverError;
+            throw new Error(Card.serverError);
         }
         let due = new Date(card.due);
 
@@ -36,10 +38,14 @@ class Card extends Task {
         this.dueDate = `${due.getMonth() + 1}/${due.getDate()}`
         this.url = card.url;
 
-        let customFields = await Card.fetchCustomFieldItems(cardId);
-
         for (let field of customFields) {
-            let fieldName = await Card.fetchCustomFieldName(field.idCustomField);
+            let fieldName = null;
+            try {
+                fieldName = await Card.fetchCustomFieldName(field.idCustomField);
+            }
+            catch (error) {
+                throw new Error(Card.serverError);
+            }
 
             switch (fieldName) {
                 case '⌛ Duration':
@@ -158,14 +164,14 @@ class Card extends Task {
             syncField = await this.fetchCustomField(actionCustomFieldId);
         }
         catch (error) {
-            throw Card.serverError;
+            throw new Error(Card.serverError);
         }
 
         const syncFieldOldValue = Card.getSyncValueFromId(syncField.options, actionSyncOldValueId);
         const syncFieldNewValue = Card.getSyncValueFromId(syncField.options, actionSyncNewValueId);
 
         if (syncFieldNewValue === 'False' || (syncFieldOldValue === syncFieldNewValue)) {
-            throw Card.nonSyncRequestError;
+            throw new Error(Card.nonSyncRequestError);
         }
     }
 
@@ -202,7 +208,7 @@ class Card extends Task {
     static handleUnexpectedCustomField(action) {
         const actionCustomFieldName = action.data.customField.name;
         if (actionCustomFieldName !== Card.expectedSyncFieldName) {
-            throw unexpectedCustomFieldError;
+            throw new Error(Card.unexpectedCustomFieldError);
         }
     }
 }
