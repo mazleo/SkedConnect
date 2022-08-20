@@ -30,12 +30,12 @@ class Card extends Task {
         catch (error) {
             throw new Error(Card.serverError);
         }
-        let due = new Date(card.due);
+        let due = card.due !== null ? new Date(card.due) : null;
 
         this.task = card.name;
         this.notes = card.desc;
         this.parentTask = boardName;
-        this.dueDate = `${due.getMonth() + 1}/${due.getDate()}`
+        this.dueDate = due !== null ? `${due.getMonth() + 1}/${due.getDate()}` : null;
         this.url = card.url;
 
         for (let field of customFields) {
