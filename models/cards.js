@@ -96,25 +96,6 @@ class Card extends Task {
         });
     }
 
-    static async handleNonSyncRequest(action) {
-        const actionCustomFieldId = action.data.customField.id;
-        const actionSyncOldValueId = action.data.old.idValue;
-        const actionSyncNewValueId = action.data.customFieldItem.idValue;
-
-        let syncField = null;
-        try { syncField = await this.fetchCustomField(actionCustomFieldId); }
-        catch (error) { throw new Error(Card.serverError); }
-
-        const syncFieldOldValue = Card.getSyncValueFromId(syncField.options, actionSyncOldValueId);
-        const syncFieldNewValue = Card.getSyncValueFromId(syncField.options, actionSyncNewValueId);
-
-        if (syncFieldNewValue === 'False' || (syncFieldOldValue === syncFieldNewValue)) throw new Error(Card.nonSyncRequestError);
-    }
-
-    static getSyncValueFromId(options, id) {
-        for (let option of options) if (id == option.id) return option.value.text;
-    }
-
     static fetchCustomField(id) {
         return new Promise((resolve, reject) => {
             const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
@@ -140,6 +121,25 @@ class Card extends Task {
         });
 
         request.end();
+    }
+
+    static async handleNonSyncRequest(action) {
+        const actionCustomFieldId = action.data.customField.id;
+        const actionSyncOldValueId = action.data.old.idValue;
+        const actionSyncNewValueId = action.data.customFieldItem.idValue;
+
+        let syncField = null;
+        try { syncField = await this.fetchCustomField(actionCustomFieldId); }
+        catch (error) { throw new Error(Card.serverError); }
+
+        const syncFieldOldValue = Card.getSyncValueFromId(syncField.options, actionSyncOldValueId);
+        const syncFieldNewValue = Card.getSyncValueFromId(syncField.options, actionSyncNewValueId);
+
+        if (syncFieldNewValue === 'False' || (syncFieldOldValue === syncFieldNewValue)) throw new Error(Card.nonSyncRequestError);
+    }
+
+    static getSyncValueFromId(options, id) {
+        for (let option of options) if (id == option.id) return option.value.text;
     }
 
     static handleUnexpectedCustomField(action) {
