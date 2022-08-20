@@ -4,3 +4,4 @@
 .env
 staging.yaml
 node_modules/
+ignored/

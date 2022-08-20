@@ -1,4 +1,8 @@
 
+# ~~~~~~~~~~ GENERAL ~~~~~~~~~~
+
+ignored/
+
 # ~~~~~~~~~~ GOOGLE APP ENGINE ~~~~~~~~~~
 
 # Google App Engine generated folder
