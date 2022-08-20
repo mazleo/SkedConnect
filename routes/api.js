@@ -9,7 +9,6 @@ const Card = require('../models/cards');
 const Board = require('../models/boards');
 
 const CARD_TYPE = 'updateCustomFieldItem';
-const BOARD_TYPE = 'copyBoard';
 
 router.post('/', async (req, res, next) => {
     let task = null;
@@ -25,10 +24,12 @@ router.post('/', async (req, res, next) => {
     const msg = `Task '${task.task}' created.`;
     const successMsg = {success: msg};
 
-    res.status(200);
     await emailTask(task);
     console.log(`[success] ${msg}`);
+
+    res.status(200);
     res.json(successMsg);
+
     return;
 });
 
