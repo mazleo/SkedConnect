@@ -15,7 +15,7 @@ const verifyFromTrello = (req, res, next) => {
 }
 
 function generateHash(request) {
-    const contentToHash = JSON.stringify(request.body) + process.env.TRELLO_CALLBACK_URL;
+    const contentToHash = JSON.stringify(request.body) + process.env.CALLBACK_URL;
     const doubleHash = crypto.createHmac('sha1', process.env.TRELLO_SECRET).update(contentToHash).digest('base64');
     return doubleHash;
 }
