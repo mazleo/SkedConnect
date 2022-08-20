@@ -78,72 +78,21 @@ class Card extends Task {
     static fetchCustomFieldName(id) {
         return new Promise((resolve, reject) => {
             const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-
-            const options = {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            };
-
-            const request = https.get(customFieldApiUrl, options, response => {
-                response.on('data', data => {
-                    resolve(JSON.parse(data.toString()).name);
-                })
-            });
-
-            request.on('error', error => {
-                reject(error);
-            })
-
-            request.end();
+            Card.fetch(customFieldApiUrl, resolve, reject);
         });
     }
 
     static fetchCustomFieldItems(id) {
         return new Promise((resolve, reject) => {
             const customFieldsApiUrl = `https://api.trello.com/1/cards/${id}/customFieldItems?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-
-            const options = {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            };
-
-            const request = https.get(customFieldsApiUrl, options, response => {
-                response.on('data', data => {
-                    resolve(JSON.parse(data.toString()));
-                });
-            });
-
-            request.on('error', error => {
-                reject(error);
-            })
-
-            request.end();
+            Card.fetch(customFieldsApiUrl, resolve, reject);
         });
     }
 
     static fetchCard(cardId) {
         return new Promise((resolve, reject) => {
             const cardApiUrl = `https://api.trello.com/1/cards/${cardId}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=all`;
-
-            const options = {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            };
-
-            const request = https.get(cardApiUrl, options, response => {
-                response.on('data', data => {
-                    resolve(JSON.parse(data.toString()));
-                });
-            });
-
-            request.on('error', error => {
-                reject(error);
-            })
-
-            request.end();
+            Card.fetch(cardApiUrl, resolve, reject);
         });
     }
 
@@ -169,25 +118,28 @@ class Card extends Task {
     static fetchCustomField(id) {
         return new Promise((resolve, reject) => {
             const customFieldApiUrl = `https://api.trello.com/1/customFields/${id}?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}`;
-
-            const options = {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            };
-
-            const request = https.get(customFieldApiUrl, options, (response) => {
-                response.on('data', (data) => {
-                    resolve(JSON.parse(data.toString()));
-                });
-            });
-
-            request.on('error', (error) => {
-                reject(error);
-            });
-
-            request.end();
+            Card.fetch(customFieldApiUrl, resolve, reject);
         });
+    }
+
+    static fetch(url, resolve, reject) {
+        const options = {
+            headers: {
+                'Accept': 'application/json'
+            }
+        };
+
+        const request = https.get(url, options, (response) => {
+            response.on('data', (data) => {
+                resolve(JSON.parse(data.toString()));
+            });
+        });
+
+        request.on('error', (error) => {
+            reject(error);
+        });
+
+        request.end();
     }
 
     static handleUnexpectedCustomField(action) {
