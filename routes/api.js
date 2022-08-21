@@ -2,15 +2,15 @@
 const express = require('express');
 const router = express.Router();
 
-const mailer = require('nodemailer');
-const smtp = require('nodemailer-smtp-transport');
-
 const Card = require('../models/cards');
 const Board = require('../models/boards');
 
 const CARD_TYPE = 'updateCustomFieldItem';
 
 router.post('/', async (req, res, next) => {
+    const mailer = require('nodemailer');
+    const smtp = require('nodemailer-smtp-transport');
+
     let task = null;
     if (isCardType(req.body)) task = new Card();
     else task = new Board();
@@ -25,7 +25,7 @@ router.post('/', async (req, res, next) => {
     const successMsg = {success: msg};
 
     try {
-        await emailTask(task);
+        await emailTask(task, mailer, smtp);
         console.log(`[success] ${msg}`);
     }
     catch (error) {
@@ -41,7 +41,7 @@ router.post('/', async (req, res, next) => {
     return;
 });
 
-async function emailTask(task) {
+async function emailTask(task, mailer, smtp) {
   const transport = mailer.createTransport(
     smtp({
       host: 'in.mailjet.com',
